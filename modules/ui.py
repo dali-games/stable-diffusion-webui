@@ -397,7 +397,7 @@ def interrogate_deepbooru(image):
 
 
 def create_seed_inputs():
-    with gr.Row():
+    with gr.Row(visible=False):
         with gr.Box():
             with gr.Row(elem_id='seed_row'):
                 seed = (gr.Textbox if cmd_opts.use_textbox_seed else gr.Number)(label='Seed', value=-1)
@@ -507,7 +507,7 @@ def create_toprow(is_img2img):
                             placeholder="Negative prompt (press Ctrl+Enter or Alt+Enter to generate)"
                         )
 
-        with gr.Column(scale=1, elem_id="roll_col"):
+        with gr.Column(scale=1, elem_id="roll_col", visible=False):
             roll = gr.Button(value=art_symbol, elem_id="roll", visible=len(shared.artist_db.artists) > 0)
             paste = gr.Button(value=paste_symbol, elem_id="paste")
             save_style = gr.Button(value=save_style_symbol, elem_id="style_create")
@@ -519,7 +519,7 @@ def create_toprow(is_img2img):
         button_interrogate = None
         button_deepbooru = None
         if is_img2img:
-            with gr.Column(scale=1, elem_id="interrogate_col"):
+            with gr.Column(scale=1, elem_id="interrogate_col", visible=False):
                 button_interrogate = gr.Button('Interrogate\nCLIP', elem_id="interrogate")
 
                 if cmd_opts.deepdanbooru:
@@ -543,7 +543,7 @@ def create_toprow(is_img2img):
                     outputs=[],
                 )
 
-            with gr.Row():
+            with gr.Row(visible=False):
                 with gr.Column(scale=1, elem_id="style_pos_col"):
                     prompt_style = gr.Dropdown(label="Style 1", elem_id=f"{id_part}_style_index", choices=[k for k, v in shared.prompt_styles.styles.items()], value=next(iter(shared.prompt_styles.styles.keys())))
                     prompt_style.save_to_config = True
@@ -656,7 +656,7 @@ def create_ui(wrap_gradio_gpu_call):
                     width = gr.Slider(minimum=64, maximum=2048, step=64, label="Width", value=512)
                     height = gr.Slider(minimum=64, maximum=2048, step=64, label="Height", value=512)
 
-                with gr.Row():
+                with gr.Row(visible=False):
                     restore_faces = gr.Checkbox(label='Restore faces', value=False, visible=len(shared.face_restorers) > 1)
                     tiling = gr.Checkbox(label='Tiling', value=False)
                     enable_hr = gr.Checkbox(label='Highres. fix', value=False)
@@ -685,14 +685,14 @@ def create_ui(wrap_gradio_gpu_call):
 
                 with gr.Column():
                     with gr.Row():
-                        save = gr.Button('Save')
+                        save = gr.Button('Save', visible=False)
                         send_to_img2img = gr.Button('Send to img2img')
-                        send_to_inpaint = gr.Button('Send to inpaint')
-                        send_to_extras = gr.Button('Send to extras')
+                        send_to_inpaint = gr.Button('Send to inpaint', visible=False)
+                        send_to_extras = gr.Button('Send to extras', visible=False)
                         button_id = "hidden_element" if shared.cmd_opts.hide_ui_dir_config else 'open_folder'
-                        open_txt2img_folder = gr.Button(folder_symbol, elem_id=button_id)
+                        open_txt2img_folder = gr.Button(folder_symbol, elem_id=button_id, visible=False)
 
-                    with gr.Row():
+                    with gr.Row(visible=False):
                         do_make_zip = gr.Checkbox(label="Make Zip when Save?", value=False)
 
                     with gr.Row():
@@ -840,10 +840,10 @@ def create_ui(wrap_gradio_gpu_call):
             with gr.Column(variant='panel'):
 
                 with gr.Tabs(elem_id="mode_img2img") as tabs_img2img_mode:
-                    with gr.TabItem('img2img', id='img2img'):
+                    with gr.Tab('img2img', id='img2img'):
                         init_img = gr.Image(label="Image for img2img", elem_id="img2img_image", show_label=False, source="upload", interactive=True, type="pil", tool=cmd_opts.gradio_img2img_tool).style(height=480)
 
-                    with gr.TabItem('Inpaint', id='inpaint'):
+                    with gr.Tab('', id='inpaint'):
                         init_img_with_mask = gr.Image(label="Image for inpainting with mask",  show_label=False, elem_id="img2maskimg", source="upload", interactive=True, type="pil", tool="sketch", image_mode="RGBA").style(height=480)
 
                         init_img_inpaint = gr.Image(label="Image for img2img", show_label=False, source="upload", interactive=True, type="pil", visible=False, elem_id="img_inpaint_base")
@@ -861,7 +861,7 @@ def create_ui(wrap_gradio_gpu_call):
                             inpaint_full_res = gr.Checkbox(label='Inpaint at full resolution', value=False)
                             inpaint_full_res_padding = gr.Slider(label='Inpaint at full resolution padding, pixels', minimum=0, maximum=256, step=4, value=32)
 
-                    with gr.TabItem('Batch img2img', id='batch'):
+                    with gr.Tab('', id='batch'):
                         hidden = '<br>Disabled when launched with --hide-ui-dir-config.' if shared.cmd_opts.hide_ui_dir_config else ''
                         gr.HTML(f"<p class=\"text-gray-500\">Process images in a directory on the same machine where the server is running.<br>Use an empty output directory to save pictures normally instead of writing to the output directory.{hidden}</p>")
                         img2img_batch_input_dir = gr.Textbox(label="Input directory", **shared.hide_dirs)
@@ -877,7 +877,7 @@ def create_ui(wrap_gradio_gpu_call):
                     width = gr.Slider(minimum=64, maximum=2048, step=64, label="Width", value=512, elem_id="img2img_width")
                     height = gr.Slider(minimum=64, maximum=2048, step=64, label="Height", value=512, elem_id="img2img_height")
 
-                with gr.Row():
+                with gr.Row(visible=False):
                     restore_faces = gr.Checkbox(label='Restore faces', value=False, visible=len(shared.face_restorers) > 1)
                     tiling = gr.Checkbox(label='Tiling', value=False)
 
@@ -902,14 +902,14 @@ def create_ui(wrap_gradio_gpu_call):
 
                 with gr.Column():
                     with gr.Row():
-                        save = gr.Button('Save')
+                        save = gr.Button('Save', visible=False)
                         img2img_send_to_img2img = gr.Button('Send to img2img')
-                        img2img_send_to_inpaint = gr.Button('Send to inpaint')
-                        img2img_send_to_extras = gr.Button('Send to extras')
+                        img2img_send_to_inpaint = gr.Button('Send to inpaint', visible=False)
+                        img2img_send_to_extras = gr.Button('Send to extras', visible=False)
                         button_id = "hidden_element" if shared.cmd_opts.hide_ui_dir_config else 'open_folder'
-                        open_img2img_folder = gr.Button(folder_symbol, elem_id=button_id)
+                        open_img2img_folder = gr.Button(folder_symbol, elem_id=button_id, visible=False)
 
-                    with gr.Row():
+                    with gr.Row(visible=False):
                         do_make_zip = gr.Checkbox(label="Make Zip when Save?", value=False)
 
                     with gr.Row():
@@ -1648,16 +1648,16 @@ Requested path was: {f}
     interfaces = [
         (txt2img_interface, "txt2img", "txt2img"),
         (img2img_interface, "img2img", "img2img"),
-        (extras_interface, "Extras", "extras"),
-        (pnginfo_interface, "PNG Info", "pnginfo"),
-        (images_history, "Image Browser", "images_history"),
-        (modelmerger_interface, "Checkpoint Merger", "modelmerger"),
-        (train_interface, "Train", "ti"),
+        (extras_interface, "", "extras"),
+        (pnginfo_interface, "", "pnginfo"),
+        (images_history, "", "images_history"),
+        (modelmerger_interface, "", "modelmerger"),
+        (train_interface, "", "ti"),
     ]
 
     interfaces += script_callbacks.ui_tabs_callback()
 
-    interfaces += [(settings_interface, "Settings", "settings")]
+    interfaces += [(settings_interface, "", "settings")]
 
     css = ""
 
@@ -1676,7 +1676,7 @@ Requested path was: {f}
         css += css_hide_progressbar
 
     with gr.Blocks(css=css, analytics_enabled=False, title="Stable Diffusion") as demo:
-        with gr.Row(elem_id="quicksettings"):
+        with gr.Row(elem_id="quicksettings", visible=False):
             for i, k, item in quicksettings_list:
                 component = create_setting_component(k, is_quicksettings=True)
                 component_dict[k] = component

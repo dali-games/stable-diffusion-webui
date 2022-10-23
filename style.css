@@ -2,6 +2,8 @@
     max-width: 100%;
 }
 
+footer {visibility: hidden}
+
 #txt2img_token_counter {
     height: 0px;
 }
